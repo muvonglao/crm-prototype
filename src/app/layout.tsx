@@ -2,7 +2,7 @@ import "~/styles/globals.css";
 import { SignIn } from "./_components/sign-in";
 import { SignOut } from "./_components/sign-out";
 
-import { auth } from "~/server/auth";
+import { auth } from "../server/auth";
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
