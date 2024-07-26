@@ -1,4 +1,8 @@
 import "~/styles/globals.css";
+import { SignIn } from "./_components/sign-in";
+import { SignOut } from "./_components/sign-out";
+
+import { auth } from "~/server/auth";
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
@@ -11,13 +15,18 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await auth();
+  console.log("session", session);
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          {!session ? <SignIn /> : <SignOut />}
+          {children}
+        </TRPCReactProvider>
       </body>
     </html>
   );
