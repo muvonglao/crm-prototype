@@ -8,7 +8,7 @@ export function SignOut() {
         await signOut();
       }}
     >
-      <button type="submit">Sign Out with Google</button>
+      <button type="submit">Logout</button>
     </form>
   );
 }

@@ -1,6 +1,6 @@
 import "~/styles/globals.css";
-import { SignIn } from "./_components/sign-in";
-import { SignOut } from "./_components/sign-out";
+import { SignIn } from "./_components/auth/sign-in";
+import { SignOut } from "./_components/auth/sign-out";
 
 import { auth } from "../server/auth";
 
@@ -18,13 +18,13 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const session = await auth();
-  console.log("session", session);
+  // const session = await auth();
+  // console.log("session", session);
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
         <TRPCReactProvider>
-          {!session ? <SignIn /> : <SignOut />}
+          {/* {!session ? <SignIn /> : <SignOut />} */}
           {children}
         </TRPCReactProvider>
       </body>
