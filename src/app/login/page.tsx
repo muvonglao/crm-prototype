@@ -1,12 +1,19 @@
 import { auth } from "~/server/auth";
 import { signIn } from "~/server/auth";
-import { SignIn } from "../_components/auth/sign-in";
+import { googleLogin } from "../../utils/auth/actions";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
 
 export default async function Dashboard() {
   const session = await auth();
@@ -16,15 +23,15 @@ export default async function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
-      <div className="flex items-center justify-center py-12">
-        <div className="mx-auto grid w-[350px] gap-6">
-          <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Login</h1>
-            <p className="text-muted-foreground text-balance">
-              Enter your email below to login to your account
-            </p>
-          </div>
+    <div className="flex min-h-screen w-full items-center">
+      <Card className="mx-auto max-w-sm">
+        <CardHeader>
+          <CardTitle className="text-center text-2xl">Login</CardTitle>
+          <CardDescription>
+            Enter your email below to login to your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
           <div className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
@@ -39,7 +46,7 @@ export default async function Dashboard() {
               <div className="flex items-center">
                 <Label htmlFor="password">Password</Label>
                 <Link
-                  href="/forgot-password"
+                  href="#"
                   className="ml-auto inline-block text-sm underline"
                 >
                   Forgot your password?
@@ -50,18 +57,11 @@ export default async function Dashboard() {
             <Button type="submit" className="w-full">
               Login
             </Button>
-            {/* <Button
-              variant="outline"
-              className="w-full"
-              onClick={async () => {
-                "use server";
-                await signIn("google");
-              }}
-            >
-              Login with Google
-            </Button> */}
-
-            <SignIn />
+            <form action={googleLogin}>
+              <Button variant="outline" className="w-full" type="submit">
+                Login with Google
+              </Button>
+            </form>
           </div>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
@@ -69,9 +69,8 @@ export default async function Dashboard() {
               Sign up
             </Link>
           </div>
-        </div>
-      </div>
-      <div className="bg-muted hidden lg:block"></div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
