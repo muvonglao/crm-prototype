@@ -2,7 +2,6 @@ import { auth } from "~/server/auth";
 import { signIn } from "~/server/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -32,30 +31,32 @@ export default async function Dashboard() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
-                <Link
-                  href="#"
-                  className="ml-auto inline-block text-sm underline"
-                >
-                  Forgot your password?
-                </Link>
+            <form className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  required
+                />
               </div>
-              <Input id="password" type="password" required />
-            </div>
-            <Button type="submit" className="w-full">
-              Login
-            </Button>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="password">Password</Label>
+                  <Link
+                    href="#"
+                    className="ml-auto inline-block text-sm underline"
+                  >
+                    Forgot your password?
+                  </Link>
+                </div>
+                <Input id="password" type="password" required />
+              </div>
+              <Button type="submit" className="w-full">
+                Login
+              </Button>
+            </form>
             <form
               action={async () => {
                 "use server";

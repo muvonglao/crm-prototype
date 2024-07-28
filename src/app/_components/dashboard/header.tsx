@@ -1,5 +1,4 @@
-"use client";
-
+import { auth } from "~/server/auth";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -33,9 +32,11 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { Input } from "~/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
-import { signOut } from "next-auth/react";
+import { signOut } from "~/server/auth";
 
-export function Header() {
+export async function Header() {
+  const session = await auth();
+  console.log("check session", session);
   return (
     <header className="bg-background sticky top-0 z-30 flex h-14 items-center gap-4 border-b px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
       <Sheet>
@@ -127,7 +128,10 @@ export function Header() {
             className="overflow-hidden rounded-full"
           >
             <Image
-              src="https://robohash.org/mail@ashallendesign.co.uk"
+              src={
+                session?.user?.image ??
+                "https://robohash.org/mail@ashallendesign.co.uk"
+              }
               width={36}
               height={36}
               alt="Avatar"
@@ -141,12 +145,18 @@ export function Header() {
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            className="hover:cursor-pointer"
-            onClick={() => signOut()}
+          <form
+            action={async () => {
+              "use server";
+              await signOut();
+            }}
           >
-            Logout
-          </DropdownMenuItem>
+            <button type="submit" className="w-full">
+              <DropdownMenuItem className="hover:cursor-pointer">
+                Logout
+              </DropdownMenuItem>
+            </button>
+          </form>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

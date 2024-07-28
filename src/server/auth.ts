@@ -12,4 +12,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     verificationTokensTable: verificationTokens,
   }),
   providers: [Google],
+  callbacks: {
+    authorized: async ({ auth, request: { nextUrl } }) => {
+      const isLoggedIn = !!auth?.user;
+      const isOnLoginPage = nextUrl.pathname.startsWith("/login");
+
+      if (isLoggedIn) {
+        return true; // If logged in, allow access to all pages
+      } else if (!isLoggedIn && !isOnLoginPage) {
+        // If not logged in and not on login page, redirect to login
+        return Response.redirect(new URL("/login", nextUrl));
+      }
+      return true; // Allow access to login page when not logged in
+    },
+  },
 });
