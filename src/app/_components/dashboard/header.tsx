@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -31,8 +33,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { Input } from "~/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
-
-import { logout } from "~/utils/auth/actions";
+import { signOut } from "next-auth/react";
 
 export function Header() {
   return (
@@ -140,15 +141,11 @@ export function Header() {
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <form action={logout} className="w-full">
-              <button
-                type="submit"
-                className="m-0 w-full cursor-pointer border-none bg-transparent p-0 text-left"
-              >
-                Logout
-              </button>
-            </form>
+          <DropdownMenuItem
+            className="hover:cursor-pointer"
+            onClick={() => signOut()}
+          >
+            Logout
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

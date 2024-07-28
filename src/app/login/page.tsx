@@ -1,6 +1,5 @@
 import { auth } from "~/server/auth";
 import { signIn } from "~/server/auth";
-import { googleLogin } from "../../utils/auth/actions";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
@@ -57,7 +56,12 @@ export default async function Dashboard() {
             <Button type="submit" className="w-full">
               Login
             </Button>
-            <form action={googleLogin}>
+            <form
+              action={async () => {
+                "use server";
+                await signIn("google");
+              }}
+            >
               <Button variant="outline" className="w-full" type="submit">
                 Login with Google
               </Button>
