@@ -36,7 +36,6 @@ import { signOut } from "~/server/auth";
 
 export async function Header() {
   const session = await auth();
-  console.log("check session", session);
   return (
     <header className="bg-background sticky top-0 z-30 flex h-14 items-center gap-4 border-b px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
       <Sheet>
@@ -148,7 +147,7 @@ export async function Header() {
           <form
             action={async () => {
               "use server";
-              await signOut();
+              await signOut({ redirectTo: "/login" });
             }}
           >
             <button type="submit" className="w-full">
