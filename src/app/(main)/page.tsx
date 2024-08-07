@@ -1,14 +1,14 @@
-import { Sidebar } from "./_components/dashboard/side-bar";
-import { Header } from "./_components/dashboard/header";
-import { ProgressCard } from "./_components/dashboard/progress-card";
-import { CustomerTable } from "./_components/dashboard/customer-table";
-import { DetailCard } from "./_components/dashboard/detail-card";
+import { Sidebar } from "../_components/dashboard/side-bar";
+import { Header } from "../_components/dashboard/header";
+import { ProgressCard } from "../_components/dashboard/progress-card";
+import { CustomerTable } from "../_components/dashboard/customer-table";
+import { DetailCard } from "../_components/dashboard/detail-card";
 import { HydrateClient } from "~/trpc/server";
 
 export default async function Dashboard() {
   return (
     <HydrateClient>
-      <div className="bg-muted/40 flex min-h-screen w-full flex-col">
+      <div className="flex min-h-screen w-full flex-col bg-muted/40">
         <Sidebar />
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
           <Header />
