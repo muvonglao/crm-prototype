@@ -1,5 +1,5 @@
 {
-  "id": "73c9a3c8-ce55-4615-8af4-ee0e9c90213d",
+  "id": "25fd9d4d-cca5-4f05-a714-eb5036202d47",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "6",
   "dialect": "postgresql",
@@ -102,6 +102,68 @@
       },
       "uniqueConstraints": {}
     },
+    "public.crm_amounts": {
+      "name": "crm_amounts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "leadId": {
+          "name": "leadId",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statusId": {
+          "name": "statusId",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount": {
+          "name": "amount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "crm_amounts_leadId_crm_leads_leadId_fk": {
+          "name": "crm_amounts_leadId_crm_leads_leadId_fk",
+          "tableFrom": "crm_amounts",
+          "tableTo": "crm_leads",
+          "columnsFrom": [
+            "leadId"
+          ],
+          "columnsTo": [
+            "leadId"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "crm_amounts_statusId_crm_lead_status_statusId_fk": {
+          "name": "crm_amounts_statusId_crm_lead_status_statusId_fk",
+          "tableFrom": "crm_amounts",
+          "tableTo": "crm_lead_status",
+          "columnsFrom": [
+            "statusId"
+          ],
+          "columnsTo": [
+            "statusId"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.crm_authenticator": {
       "name": "crm_authenticator",
       "schema": "",
@@ -190,8 +252,8 @@
         }
       }
     },
-    "public.crm_post": {
-      "name": "crm_post",
+    "public.crm_closing_dates": {
+      "name": "crm_closing_dates",
       "schema": "",
       "columns": {
         "id": {
@@ -200,9 +262,184 @@
           "primaryKey": true,
           "notNull": true
         },
+        "leadId": {
+          "name": "leadId",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statusId": {
+          "name": "statusId",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "closing_date": {
+          "name": "closing_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "crm_closing_dates_leadId_crm_leads_leadId_fk": {
+          "name": "crm_closing_dates_leadId_crm_leads_leadId_fk",
+          "tableFrom": "crm_closing_dates",
+          "tableTo": "crm_leads",
+          "columnsFrom": [
+            "leadId"
+          ],
+          "columnsTo": [
+            "leadId"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "crm_closing_dates_statusId_crm_lead_status_statusId_fk": {
+          "name": "crm_closing_dates_statusId_crm_lead_status_statusId_fk",
+          "tableFrom": "crm_closing_dates",
+          "tableTo": "crm_lead_status",
+          "columnsFrom": [
+            "statusId"
+          ],
+          "columnsTo": [
+            "statusId"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.crm_lead_status": {
+      "name": "crm_lead_status",
+      "schema": "",
+      "columns": {
+        "statusId": {
+          "name": "statusId",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "status_name": {
+          "name": "status_name",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.crm_lead_status_history": {
+      "name": "crm_lead_status_history",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "leadId": {
+          "name": "leadId",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statusId": {
+          "name": "statusId",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "change_date": {
+          "name": "change_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "crm_lead_status_history_leadId_crm_leads_leadId_fk": {
+          "name": "crm_lead_status_history_leadId_crm_leads_leadId_fk",
+          "tableFrom": "crm_lead_status_history",
+          "tableTo": "crm_leads",
+          "columnsFrom": [
+            "leadId"
+          ],
+          "columnsTo": [
+            "leadId"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "crm_lead_status_history_statusId_crm_lead_status_statusId_fk": {
+          "name": "crm_lead_status_history_statusId_crm_lead_status_statusId_fk",
+          "tableFrom": "crm_lead_status_history",
+          "tableTo": "crm_lead_status",
+          "columnsFrom": [
+            "statusId"
+          ],
+          "columnsTo": [
+            "statusId"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.crm_leads": {
+      "name": "crm_leads",
+      "schema": "",
+      "columns": {
+        "leadId": {
+          "name": "leadId",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "name": {
           "name": "name",
-          "type": "varchar(256)",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "company": {
+          "name": "company",
+          "type": "varchar(100)",
           "primaryKey": false,
           "notNull": false
         },
@@ -218,18 +455,43 @@
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
+        },
+        "statusId": {
+          "name": "statusId",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
         }
       },
-      "indexes": {
-        "name_idx": {
-          "name": "name_idx",
-          "columns": [
-            "name"
+      "indexes": {},
+      "foreignKeys": {
+        "crm_leads_userId_crm_user_id_fk": {
+          "name": "crm_leads_userId_crm_user_id_fk",
+          "tableFrom": "crm_leads",
+          "tableTo": "crm_user",
+          "columnsFrom": [
+            "userId"
           ],
-          "isUnique": false
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "crm_leads_statusId_crm_lead_status_statusId_fk": {
+          "name": "crm_leads_statusId_crm_lead_status_statusId_fk",
+          "tableFrom": "crm_leads",
+          "tableTo": "crm_lead_status",
+          "columnsFrom": [
+            "statusId"
+          ],
+          "columnsTo": [
+            "statusId"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
-      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -267,6 +529,67 @@
           ],
           "columnsTo": [
             "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.crm_status_notes": {
+      "name": "crm_status_notes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "leadId": {
+          "name": "leadId",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statusId": {
+          "name": "statusId",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "crm_status_notes_leadId_crm_leads_leadId_fk": {
+          "name": "crm_status_notes_leadId_crm_leads_leadId_fk",
+          "tableFrom": "crm_status_notes",
+          "tableTo": "crm_leads",
+          "columnsFrom": [
+            "leadId"
+          ],
+          "columnsTo": [
+            "leadId"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "crm_status_notes_statusId_crm_lead_status_statusId_fk": {
+          "name": "crm_status_notes_statusId_crm_lead_status_statusId_fk",
+          "tableFrom": "crm_status_notes",
+          "tableTo": "crm_lead_status",
+          "columnsFrom": [
+            "statusId"
+          ],
+          "columnsTo": [
+            "statusId"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"

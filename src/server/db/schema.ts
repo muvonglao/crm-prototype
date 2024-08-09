@@ -3,7 +3,6 @@
 
 import { sql } from "drizzle-orm";
 import {
-  index,
   pgTableCreator,
   serial,
   timestamp,
@@ -12,6 +11,7 @@ import {
   primaryKey,
   integer,
   boolean,
+  decimal,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
 /**
@@ -21,23 +21,6 @@ import type { AdapterAccountType } from "next-auth/adapters";
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
 export const createTable = pgTableCreator((name) => `crm_${name}`);
-
-export const posts = createTable(
-  "post",
-  {
-    id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date(),
-    ),
-  },
-  (example) => ({
-    nameIndex: index("name_idx").on(example.name),
-  }),
-);
 
 export const users = createTable("user", {
   id: text("id")
@@ -115,3 +98,75 @@ export const authenticators = createTable(
     }),
   }),
 );
+
+export const leads = createTable("leads", {
+  leadId: serial("leadId").primaryKey(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 100 }),
+  email: varchar("email", { length: 100 }),
+  phone: varchar("phone", { length: 20 }),
+  company: varchar("company", { length: 100 }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+    () => new Date(),
+  ),
+  statusId: serial("statusId")
+    .notNull()
+    .references(() => leadStatus.statusId, { onDelete: "cascade" }),
+});
+
+export const leadStatus = createTable("lead_status", {
+  statusId: serial("statusId").primaryKey(),
+  statusName: varchar("status_name", { length: 50 }).notNull(),
+  type: varchar("type", { length: 50 }).notNull(), // Category or type of status
+});
+
+export const leadStatusHistory = createTable("lead_status_history", {
+  id: serial("id").primaryKey(),
+  leadId: serial("leadId")
+    .notNull()
+    .references(() => leads.leadId, { onDelete: "cascade" }),
+  statusId: serial("statusId")
+    .notNull()
+    .references(() => leadStatus.statusId, { onDelete: "cascade" }),
+  changeDate: timestamp("change_date", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+});
+
+export const statusNotes = createTable("status_notes", {
+  id: serial("id").primaryKey(),
+  leadId: serial("leadId")
+    .notNull()
+    .references(() => leads.leadId, { onDelete: "cascade" }),
+  statusId: serial("statusId")
+    .notNull()
+    .references(() => leadStatus.statusId, { onDelete: "cascade" }),
+  note: text("note"),
+});
+
+export const amounts = createTable("amounts", {
+  id: serial("id").primaryKey(),
+  leadId: serial("leadId")
+    .notNull()
+    .references(() => leads.leadId, { onDelete: "cascade" }),
+  statusId: serial("statusId")
+    .notNull()
+    .references(() => leadStatus.statusId, { onDelete: "cascade" }),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull().default("0"),
+});
+
+export const closingDates = createTable("closing_dates", {
+  id: serial("id").primaryKey(),
+  leadId: serial("leadId")
+    .notNull()
+    .references(() => leads.leadId, { onDelete: "cascade" }),
+  statusId: serial("statusId")
+    .notNull()
+    .references(() => leadStatus.statusId, { onDelete: "cascade" }),
+  closingDate: timestamp("closing_date", { mode: "date" }).notNull(),
+});
