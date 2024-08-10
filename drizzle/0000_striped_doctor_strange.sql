@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS "crm_account" (
 CREATE TABLE IF NOT EXISTS "crm_amounts" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"leadId" serial NOT NULL,
-	"statusId" serial NOT NULL,
+	"stageId" serial NOT NULL,
 	"amount" numeric(10, 2) DEFAULT '0' NOT NULL
 );
 --> statement-breakpoint
@@ -36,21 +36,25 @@ CREATE TABLE IF NOT EXISTS "crm_authenticator" (
 CREATE TABLE IF NOT EXISTS "crm_closing_dates" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"leadId" serial NOT NULL,
-	"statusId" serial NOT NULL,
+	"stageId" serial NOT NULL,
 	"closing_date" timestamp NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "crm_lead_status" (
-	"statusId" serial PRIMARY KEY NOT NULL,
-	"status_name" varchar(50) NOT NULL,
-	"type" varchar(50) NOT NULL
+CREATE TABLE IF NOT EXISTS "crm_lead_stages" (
+	"stageId" serial PRIMARY KEY NOT NULL,
+	"stage_name" varchar(50) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "crm_lead_status_history" (
+CREATE TABLE IF NOT EXISTS "crm_lead_stages_history" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"leadId" serial NOT NULL,
-	"statusId" serial NOT NULL,
+	"stageId" serial NOT NULL,
 	"change_date" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "crm_lead_types" (
+	"typeId" serial PRIMARY KEY NOT NULL,
+	"type_name" varchar(50) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "crm_leads" (
@@ -60,9 +64,10 @@ CREATE TABLE IF NOT EXISTS "crm_leads" (
 	"email" varchar(100),
 	"phone" varchar(20),
 	"company" varchar(100),
+	"stageId" serial NOT NULL,
+	"typeId" serial NOT NULL,
 	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	"updated_at" timestamp with time zone,
-	"statusId" serial NOT NULL
+	"updated_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "crm_session" (
@@ -71,10 +76,10 @@ CREATE TABLE IF NOT EXISTS "crm_session" (
 	"expires" timestamp NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "crm_status_notes" (
+CREATE TABLE IF NOT EXISTS "crm_stages_notes" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"leadId" serial NOT NULL,
-	"statusId" serial NOT NULL,
+	"stageId" serial NOT NULL,
 	"note" text
 );
 --> statement-breakpoint
@@ -106,7 +111,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "crm_amounts" ADD CONSTRAINT "crm_amounts_statusId_crm_lead_status_statusId_fk" FOREIGN KEY ("statusId") REFERENCES "public"."crm_lead_status"("statusId") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "crm_amounts" ADD CONSTRAINT "crm_amounts_stageId_crm_lead_stages_stageId_fk" FOREIGN KEY ("stageId") REFERENCES "public"."crm_lead_stages"("stageId") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -124,19 +129,19 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "crm_closing_dates" ADD CONSTRAINT "crm_closing_dates_statusId_crm_lead_status_statusId_fk" FOREIGN KEY ("statusId") REFERENCES "public"."crm_lead_status"("statusId") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "crm_closing_dates" ADD CONSTRAINT "crm_closing_dates_stageId_crm_lead_stages_stageId_fk" FOREIGN KEY ("stageId") REFERENCES "public"."crm_lead_stages"("stageId") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "crm_lead_status_history" ADD CONSTRAINT "crm_lead_status_history_leadId_crm_leads_leadId_fk" FOREIGN KEY ("leadId") REFERENCES "public"."crm_leads"("leadId") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "crm_lead_stages_history" ADD CONSTRAINT "crm_lead_stages_history_leadId_crm_leads_leadId_fk" FOREIGN KEY ("leadId") REFERENCES "public"."crm_leads"("leadId") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "crm_lead_status_history" ADD CONSTRAINT "crm_lead_status_history_statusId_crm_lead_status_statusId_fk" FOREIGN KEY ("statusId") REFERENCES "public"."crm_lead_status"("statusId") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "crm_lead_stages_history" ADD CONSTRAINT "crm_lead_stages_history_stageId_crm_lead_stages_stageId_fk" FOREIGN KEY ("stageId") REFERENCES "public"."crm_lead_stages"("stageId") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -148,7 +153,13 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "crm_leads" ADD CONSTRAINT "crm_leads_statusId_crm_lead_status_statusId_fk" FOREIGN KEY ("statusId") REFERENCES "public"."crm_lead_status"("statusId") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "crm_leads" ADD CONSTRAINT "crm_leads_stageId_crm_lead_stages_stageId_fk" FOREIGN KEY ("stageId") REFERENCES "public"."crm_lead_stages"("stageId") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "crm_leads" ADD CONSTRAINT "crm_leads_typeId_crm_lead_types_typeId_fk" FOREIGN KEY ("typeId") REFERENCES "public"."crm_lead_types"("typeId") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -160,13 +171,13 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "crm_status_notes" ADD CONSTRAINT "crm_status_notes_leadId_crm_leads_leadId_fk" FOREIGN KEY ("leadId") REFERENCES "public"."crm_leads"("leadId") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "crm_stages_notes" ADD CONSTRAINT "crm_stages_notes_leadId_crm_leads_leadId_fk" FOREIGN KEY ("leadId") REFERENCES "public"."crm_leads"("leadId") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "crm_status_notes" ADD CONSTRAINT "crm_status_notes_statusId_crm_lead_status_statusId_fk" FOREIGN KEY ("statusId") REFERENCES "public"."crm_lead_status"("statusId") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "crm_stages_notes" ADD CONSTRAINT "crm_stages_notes_stageId_crm_lead_stages_stageId_fk" FOREIGN KEY ("stageId") REFERENCES "public"."crm_lead_stages"("stageId") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

@@ -99,6 +99,24 @@ export const authenticators = createTable(
   }),
 );
 
+export const teams = createTable("teams", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  teamName: varchar("team_name", { length: 100 }),
+});
+
+export const usersTeams = createTable("users_teams", {
+  id: serial("id").primaryKey(),
+  teamId: text("teamId")
+    .notNull()
+    .references(() => teams.id, { onDelete: "cascade" }),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  role: text("role").notNull(),
+});
+
 export const leads = createTable("leads", {
   leadId: serial("leadId").primaryKey(),
   userId: text("userId")
@@ -108,44 +126,51 @@ export const leads = createTable("leads", {
   email: varchar("email", { length: 100 }),
   phone: varchar("phone", { length: 20 }),
   company: varchar("company", { length: 100 }),
+  stageId: serial("stageId")
+    .notNull()
+    .references(() => leadStages.stageId, { onDelete: "cascade" }),
+  typeId: serial("typeId")
+    .notNull()
+    .references(() => leadTypes.typeId, { onDelete: "cascade" }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
     () => new Date(),
   ),
-  statusId: serial("statusId")
-    .notNull()
-    .references(() => leadStatus.statusId, { onDelete: "cascade" }),
 });
 
-export const leadStatus = createTable("lead_status", {
-  statusId: serial("statusId").primaryKey(),
-  statusName: varchar("status_name", { length: 50 }).notNull(),
-  type: varchar("type", { length: 50 }).notNull(), // Category or type of status
+export const leadTypes = createTable("lead_types", {
+  typeId: serial("typeId").primaryKey(),
+  typeName: varchar("type_name", { length: 50 }).notNull(),
 });
 
-export const leadStatusHistory = createTable("lead_status_history", {
+export const leadStages = createTable("lead_stages", {
+  stageId: serial("stageId").primaryKey(),
+  stageName: varchar("stage_name", { length: 50 }).notNull(),
+});
+
+export const leadStagesHistory = createTable("lead_stages_history", {
   id: serial("id").primaryKey(),
   leadId: serial("leadId")
     .notNull()
     .references(() => leads.leadId, { onDelete: "cascade" }),
-  statusId: serial("statusId")
+  stageId: serial("stageId")
     .notNull()
-    .references(() => leadStatus.statusId, { onDelete: "cascade" }),
+    .references(() => leadStages.stageId, { onDelete: "cascade" }),
   changeDate: timestamp("change_date", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });
 
-export const statusNotes = createTable("status_notes", {
+export const stagesNotes = createTable("stages_notes", {
   id: serial("id").primaryKey(),
   leadId: serial("leadId")
     .notNull()
     .references(() => leads.leadId, { onDelete: "cascade" }),
-  statusId: serial("statusId")
+  stageId: serial("stageId")
     .notNull()
-    .references(() => leadStatus.statusId, { onDelete: "cascade" }),
+    .references(() => leadStages.stageId, { onDelete: "cascade" }),
   note: text("note"),
 });
 
@@ -154,9 +179,9 @@ export const amounts = createTable("amounts", {
   leadId: serial("leadId")
     .notNull()
     .references(() => leads.leadId, { onDelete: "cascade" }),
-  statusId: serial("statusId")
+  stageId: serial("stageId")
     .notNull()
-    .references(() => leadStatus.statusId, { onDelete: "cascade" }),
+    .references(() => leadStages.stageId, { onDelete: "cascade" }),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull().default("0"),
 });
 
@@ -165,8 +190,8 @@ export const closingDates = createTable("closing_dates", {
   leadId: serial("leadId")
     .notNull()
     .references(() => leads.leadId, { onDelete: "cascade" }),
-  statusId: serial("statusId")
+  stageId: serial("stageId")
     .notNull()
-    .references(() => leadStatus.statusId, { onDelete: "cascade" }),
+    .references(() => leadStages.stageId, { onDelete: "cascade" }),
   closingDate: timestamp("closing_date", { mode: "date" }).notNull(),
 });

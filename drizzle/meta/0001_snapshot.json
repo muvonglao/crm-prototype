@@ -1,6 +1,6 @@
 {
-  "id": "40b1b9e8-f83f-4e61-983e-82884d1b85ed",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "68bde2e5-dbcc-408d-b9b7-4b4445fd62dc",
+  "prevId": "40b1b9e8-f83f-4e61-983e-82884d1b85ed",
   "version": "6",
   "dialect": "postgresql",
   "tables": {
@@ -633,6 +633,28 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "public.crm_teams": {
+      "name": "crm_teams",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "team_name": {
+          "name": "team_name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.crm_user": {
       "name": "crm_user",
       "schema": "",
@@ -670,6 +692,67 @@
       },
       "indexes": {},
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.crm_users_teams": {
+      "name": "crm_users_teams",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "teamId": {
+          "name": "teamId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "crm_users_teams_teamId_crm_teams_id_fk": {
+          "name": "crm_users_teams_teamId_crm_teams_id_fk",
+          "tableFrom": "crm_users_teams",
+          "tableTo": "crm_teams",
+          "columnsFrom": [
+            "teamId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "crm_users_teams_userId_crm_user_id_fk": {
+          "name": "crm_users_teams_userId_crm_user_id_fk",
+          "tableFrom": "crm_users_teams",
+          "tableTo": "crm_user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
