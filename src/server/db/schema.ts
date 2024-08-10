@@ -119,9 +119,7 @@ export const usersTeams = createTable("users_teams", {
 
 export const leads = createTable("leads", {
   leadId: serial("leadId").primaryKey(),
-  userId: text("userId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+  userId: text("userId").references(() => users.id, { onDelete: "cascade" }),
   name: varchar("name", { length: 100 }),
   email: varchar("email", { length: 100 }),
   phone: varchar("phone", { length: 20 }),
@@ -194,4 +192,22 @@ export const closingDates = createTable("closing_dates", {
     .notNull()
     .references(() => leadStages.stageId, { onDelete: "cascade" }),
   closingDate: timestamp("closing_date", { mode: "date" }).notNull(),
+});
+
+export const services = createTable("services", {
+  serviceId: serial("serviceId").primaryKey(),
+  serviceName: varchar("service_name", { length: 100 }).notNull(),
+});
+
+export const leadServices = createTable("lead_services", {
+  id: serial("id").primaryKey(),
+  leadId: serial("leadId")
+    .notNull()
+    .references(() => leads.leadId, { onDelete: "cascade" }),
+  serviceId: serial("serviceId")
+    .notNull()
+    .references(() => services.serviceId, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
 });

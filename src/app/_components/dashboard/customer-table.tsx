@@ -25,15 +25,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { ListFilter, File } from "lucide-react";
+import { auth } from "~/server/auth";
+import Image from "next/image";
+import { api } from "~/trpc/server";
 
-export function CustomerTable() {
+export async function CustomerTable() {
+  const session = await auth();
+  const leads = await api.leads.getLeads();
   return (
     <Tabs defaultValue="week">
       <div className="flex items-center">
         <TabsList>
-          <TabsTrigger value="week">Week</TabsTrigger>
-          <TabsTrigger value="month">Month</TabsTrigger>
-          <TabsTrigger value="year">Year</TabsTrigger>
+          <TabsTrigger value="week">Table</TabsTrigger>
+          <TabsTrigger value="month">Pipeline</TabsTrigger>
+          <TabsTrigger value="year">Forecast</TabsTrigger>
         </TabsList>
         <div className="ml-auto flex items-center gap-2">
           <DropdownMenu>
@@ -73,13 +78,56 @@ export function CustomerTable() {
               <TableHeader className="sticky top-[98px] bg-card">
                 <TableRow>
                   <TableHead>Customer</TableHead>
+                  <TableHead className="hidden md:table-cell">Phone</TableHead>
                   <TableHead className="hidden sm:table-cell">Type</TableHead>
-                  <TableHead className="hidden sm:table-cell">Status</TableHead>
-                  <TableHead className="hidden md:table-cell">Date</TableHead>
+                  <TableHead className="hidden sm:table-cell">Stage</TableHead>
+                  <TableHead className="hidden sm:table-cell">
+                    Service
+                  </TableHead>
+                  <TableHead className="hidden lg:table-cell">Owner</TableHead>
                   <TableHead className="text-right">Amount</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
+                {leads.map((lead, index) => {
+                  return (
+                    <TableRow key={index}>
+                      <TableCell>
+                        <div className="font-medium">{lead.name}</div>
+                        <div className="hidden text-sm text-muted-foreground md:inline">
+                          {lead.email}
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        {lead.phone}
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell">
+                        {lead.typeName}
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell">
+                        <Badge className="text-xs" variant="secondary">
+                          {lead.stageName}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell">
+                        {lead.serviceName}
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        <Image
+                          src={
+                            lead.userImage ??
+                            "https://robohash.org/mail@ashallendesign.co.uk"
+                          }
+                          width={36}
+                          height={36}
+                          alt="Avatar"
+                          className="overflow-hidden rounded-full"
+                        />
+                      </TableCell>
+                      <TableCell className="text-right">฿5,000</TableCell>
+                    </TableRow>
+                  );
+                })}
                 <TableRow className="bg-accent">
                   <TableCell>
                     <div className="font-medium">Liam Johnson</div>
@@ -87,162 +135,31 @@ export function CustomerTable() {
                       liam@example.com
                     </div>
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell">Sale</TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    081955891
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">Lead</TableCell>
                   <TableCell className="hidden sm:table-cell">
                     <Badge className="text-xs" variant="secondary">
-                      Fulfilled
+                      Discovery
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    2023-06-23
-                  </TableCell>
-                  <TableCell className="text-right">$250.00</TableCell>
-                </TableRow>
-                <TableRow className="bg-accent">
-                  <TableCell>
-                    <div className="font-medium">Liam Johnson</div>
-                    <div className="hidden text-sm text-muted-foreground md:inline">
-                      liam@example.com
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">Sale</TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    <Badge className="text-xs" variant="secondary">
-                      Fulfilled
-                    </Badge>
+                    Meta Ad
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    2023-06-23
+                  <TableCell className="hidden lg:table-cell">
+                    <Image
+                      src={
+                        session?.user?.image ??
+                        "https://robohash.org/mail@ashallendesign.co.uk"
+                      }
+                      width={36}
+                      height={36}
+                      alt="Avatar"
+                      className="overflow-hidden rounded-full"
+                    />
                   </TableCell>
-                  <TableCell className="text-right">$250.00</TableCell>
-                </TableRow>
-                <TableRow className="bg-accent">
-                  <TableCell>
-                    <div className="font-medium">Liam Johnson</div>
-                    <div className="hidden text-sm text-muted-foreground md:inline">
-                      liam@example.com
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">Sale</TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    <Badge className="text-xs" variant="secondary">
-                      Fulfilled
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    2023-06-23
-                  </TableCell>
-                  <TableCell className="text-right">$250.00</TableCell>
-                </TableRow>
-                <TableRow className="bg-accent">
-                  <TableCell>
-                    <div className="font-medium">Liam Johnson</div>
-                    <div className="hidden text-sm text-muted-foreground md:inline">
-                      liam@example.com
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">Sale</TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    <Badge className="text-xs" variant="secondary">
-                      Fulfilled
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    2023-06-23
-                  </TableCell>
-                  <TableCell className="text-right">$250.00</TableCell>
-                </TableRow>
-                <TableRow className="bg-accent">
-                  <TableCell>
-                    <div className="font-medium">Liam Johnson</div>
-                    <div className="hidden text-sm text-muted-foreground md:inline">
-                      liam@example.com
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">Sale</TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    <Badge className="text-xs" variant="secondary">
-                      Fulfilled
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    2023-06-23
-                  </TableCell>
-                  <TableCell className="text-right">$250.00</TableCell>
-                </TableRow>
-                <TableRow className="bg-accent">
-                  <TableCell>
-                    <div className="font-medium">Liam Johnson</div>
-                    <div className="hidden text-sm text-muted-foreground md:inline">
-                      liam@example.com
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">Sale</TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    <Badge className="text-xs" variant="secondary">
-                      Fulfilled
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    2023-06-23
-                  </TableCell>
-                  <TableCell className="text-right">$250.00</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <div className="font-medium">Olivia Smith</div>
-                    <div className="hidden text-sm text-muted-foreground md:inline">
-                      olivia@example.com
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">Refund</TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    <Badge className="text-xs" variant="outline">
-                      Declined
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    2023-06-24
-                  </TableCell>
-                  <TableCell className="text-right">$150.00</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <div className="font-medium">Noah Williams</div>
-                    <div className="hidden text-sm text-muted-foreground md:inline">
-                      noah@example.com
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    Subscription
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    <Badge className="text-xs" variant="secondary">
-                      Fulfilled
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    2023-06-25
-                  </TableCell>
-                  <TableCell className="text-right">$350.00</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <div className="font-medium">Emma Brown</div>
-                    <div className="hidden text-sm text-muted-foreground md:inline">
-                      emma@example.com
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">Sale</TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    <Badge className="text-xs" variant="secondary">
-                      Fulfilled
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    2023-06-26
-                  </TableCell>
-                  <TableCell className="text-right">$450.00</TableCell>
+                  <TableCell className="text-right">฿5,000</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>
@@ -251,70 +168,31 @@ export function CustomerTable() {
                       liam@example.com
                     </div>
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell">Sale</TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    081955891
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">Lead</TableCell>
                   <TableCell className="hidden sm:table-cell">
                     <Badge className="text-xs" variant="secondary">
-                      Fulfilled
+                      Discovery
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    2023-06-23
-                  </TableCell>
-                  <TableCell className="text-right">$250.00</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <div className="font-medium">Liam Johnson</div>
-                    <div className="hidden text-sm text-muted-foreground md:inline">
-                      liam@example.com
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">Sale</TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    <Badge className="text-xs" variant="secondary">
-                      Fulfilled
-                    </Badge>
+                    Meta Ad
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    2023-06-23
+                  <TableCell className="hidden lg:table-cell">
+                    <Image
+                      src={
+                        session?.user?.image ??
+                        "https://robohash.org/mail@ashallendesign.co.uk"
+                      }
+                      width={36}
+                      height={36}
+                      alt="Avatar"
+                      className="overflow-hidden rounded-full"
+                    />
                   </TableCell>
-                  <TableCell className="text-right">$250.00</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <div className="font-medium">Olivia Smith</div>
-                    <div className="hidden text-sm text-muted-foreground md:inline">
-                      olivia@example.com
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">Refund</TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    <Badge className="text-xs" variant="outline">
-                      Declined
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    2023-06-24
-                  </TableCell>
-                  <TableCell className="text-right">$150.00</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <div className="font-medium">Emma Brown</div>
-                    <div className="hidden text-sm text-muted-foreground md:inline">
-                      emma@example.com
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">Sale</TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    <Badge className="text-xs" variant="secondary">
-                      Fulfilled
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    2023-06-26
-                  </TableCell>
-                  <TableCell className="text-right">$450.00</TableCell>
+                  <TableCell className="text-right">฿5,000</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
