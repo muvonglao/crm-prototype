@@ -70,18 +70,21 @@ export async function CustomerTable() {
           className="h-[calc(100vh-138px)] overflow-auto"
         >
           <CardHeader className="sticky top-0 bg-card px-7">
-            <CardTitle>Orders</CardTitle>
+            <CardTitle>Leads</CardTitle>
             <CardDescription>Recent orders from your store.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
-              <TableHeader className="sticky top-[98px] bg-card">
+              <TableHeader className="sticky top-[98px] bg-background/80 backdrop-blur-sm">
                 <TableRow>
                   <TableHead>Customer</TableHead>
-                  <TableHead className="hidden md:table-cell">Phone</TableHead>
-                  <TableHead className="hidden sm:table-cell">Type</TableHead>
-                  <TableHead className="hidden sm:table-cell">Stage</TableHead>
-                  <TableHead className="hidden sm:table-cell">
+                  <TableHead className="hidden xl:table-cell">
+                    Company
+                  </TableHead>
+                  <TableHead className="hidden sm:table-cell">Phone</TableHead>
+                  <TableHead className="hidden lg:table-cell">Type</TableHead>
+                  <TableHead>Stage</TableHead>
+                  <TableHead className="hidden lg:table-cell">
                     Service
                   </TableHead>
                   <TableHead className="hidden lg:table-cell">Owner</TableHead>
@@ -94,22 +97,27 @@ export async function CustomerTable() {
                     <TableRow key={index}>
                       <TableCell>
                         <div className="font-medium">{lead.name}</div>
-                        <div className="hidden text-sm text-muted-foreground md:inline">
+                        <div className="hidden text-sm text-muted-foreground md:block">
                           {lead.email}
                         </div>
                       </TableCell>
-                      <TableCell className="hidden md:table-cell">
+                      <TableCell className="hidden xl:table-cell">
+                        <Badge className="text-xs" variant="secondary">
+                          {lead.company}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         {lead.phone}
                       </TableCell>
-                      <TableCell className="hidden sm:table-cell">
+                      <TableCell className="hidden lg:table-cell">
                         {lead.typeName}
                       </TableCell>
-                      <TableCell className="hidden sm:table-cell">
+                      <TableCell>
                         <Badge className="text-xs" variant="secondary">
                           {lead.stageName}
                         </Badge>
                       </TableCell>
-                      <TableCell className="hidden sm:table-cell">
+                      <TableCell className="hidden lg:table-cell">
                         {lead.serviceName}
                       </TableCell>
                       <TableCell className="hidden lg:table-cell">
@@ -135,49 +143,21 @@ export async function CustomerTable() {
                       liam@example.com
                     </div>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    081955891
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">Lead</TableCell>
-                  <TableCell className="hidden sm:table-cell">
+                  <TableCell className="hidden xl:table-cell">
                     <Badge className="text-xs" variant="secondary">
-                      Discovery
+                      CCKK
                     </Badge>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    Meta Ad
+                    081955891
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">Lead</TableCell>
+                  <TableCell>
+                    <Badge className="text-xs" variant="secondary">
+                      Discovery
+                    </Badge>
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">
-                    <Image
-                      src={
-                        session?.user?.image ??
-                        "https://robohash.org/mail@ashallendesign.co.uk"
-                      }
-                      width={36}
-                      height={36}
-                      alt="Avatar"
-                      className="overflow-hidden rounded-full"
-                    />
-                  </TableCell>
-                  <TableCell className="text-right">฿5,000</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <div className="font-medium">Liam Johnson</div>
-                    <div className="hidden text-sm text-muted-foreground md:inline">
-                      liam@example.com
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    081955891
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">Lead</TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    <Badge className="text-xs" variant="secondary">
-                      Discovery
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">
                     Meta Ad
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">
