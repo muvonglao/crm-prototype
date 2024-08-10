@@ -60,14 +60,17 @@ export function CustomerTable() {
         </div>
       </div>
       <TabsContent value="week">
-        <Card x-chunk="dashboard-05-chunk-3">
-          <CardHeader className="px-7">
+        <Card
+          x-chunk="dashboard-05-chunk-3"
+          className="h-[calc(100vh-138px)] overflow-auto"
+        >
+          <CardHeader className="sticky top-0 bg-card px-7">
             <CardTitle>Orders</CardTitle>
             <CardDescription>Recent orders from your store.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
-              <TableHeader>
+              <TableHeader className="sticky top-[98px] bg-card">
                 <TableRow>
                   <TableHead>Customer</TableHead>
                   <TableHead className="hidden sm:table-cell">Type</TableHead>
@@ -80,7 +83,97 @@ export function CustomerTable() {
                 <TableRow className="bg-accent">
                   <TableCell>
                     <div className="font-medium">Liam Johnson</div>
-                    <div className="text-muted-foreground hidden text-sm md:inline">
+                    <div className="hidden text-sm text-muted-foreground md:inline">
+                      liam@example.com
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">Sale</TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    <Badge className="text-xs" variant="secondary">
+                      Fulfilled
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    2023-06-23
+                  </TableCell>
+                  <TableCell className="text-right">$250.00</TableCell>
+                </TableRow>
+                <TableRow className="bg-accent">
+                  <TableCell>
+                    <div className="font-medium">Liam Johnson</div>
+                    <div className="hidden text-sm text-muted-foreground md:inline">
+                      liam@example.com
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">Sale</TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    <Badge className="text-xs" variant="secondary">
+                      Fulfilled
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    2023-06-23
+                  </TableCell>
+                  <TableCell className="text-right">$250.00</TableCell>
+                </TableRow>
+                <TableRow className="bg-accent">
+                  <TableCell>
+                    <div className="font-medium">Liam Johnson</div>
+                    <div className="hidden text-sm text-muted-foreground md:inline">
+                      liam@example.com
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">Sale</TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    <Badge className="text-xs" variant="secondary">
+                      Fulfilled
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    2023-06-23
+                  </TableCell>
+                  <TableCell className="text-right">$250.00</TableCell>
+                </TableRow>
+                <TableRow className="bg-accent">
+                  <TableCell>
+                    <div className="font-medium">Liam Johnson</div>
+                    <div className="hidden text-sm text-muted-foreground md:inline">
+                      liam@example.com
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">Sale</TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    <Badge className="text-xs" variant="secondary">
+                      Fulfilled
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    2023-06-23
+                  </TableCell>
+                  <TableCell className="text-right">$250.00</TableCell>
+                </TableRow>
+                <TableRow className="bg-accent">
+                  <TableCell>
+                    <div className="font-medium">Liam Johnson</div>
+                    <div className="hidden text-sm text-muted-foreground md:inline">
+                      liam@example.com
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">Sale</TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    <Badge className="text-xs" variant="secondary">
+                      Fulfilled
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    2023-06-23
+                  </TableCell>
+                  <TableCell className="text-right">$250.00</TableCell>
+                </TableRow>
+                <TableRow className="bg-accent">
+                  <TableCell>
+                    <div className="font-medium">Liam Johnson</div>
+                    <div className="hidden text-sm text-muted-foreground md:inline">
                       liam@example.com
                     </div>
                   </TableCell>
@@ -98,7 +191,7 @@ export function CustomerTable() {
                 <TableRow>
                   <TableCell>
                     <div className="font-medium">Olivia Smith</div>
-                    <div className="text-muted-foreground hidden text-sm md:inline">
+                    <div className="hidden text-sm text-muted-foreground md:inline">
                       olivia@example.com
                     </div>
                   </TableCell>
@@ -116,7 +209,7 @@ export function CustomerTable() {
                 <TableRow>
                   <TableCell>
                     <div className="font-medium">Noah Williams</div>
-                    <div className="text-muted-foreground hidden text-sm md:inline">
+                    <div className="hidden text-sm text-muted-foreground md:inline">
                       noah@example.com
                     </div>
                   </TableCell>
@@ -136,7 +229,7 @@ export function CustomerTable() {
                 <TableRow>
                   <TableCell>
                     <div className="font-medium">Emma Brown</div>
-                    <div className="text-muted-foreground hidden text-sm md:inline">
+                    <div className="hidden text-sm text-muted-foreground md:inline">
                       emma@example.com
                     </div>
                   </TableCell>
@@ -154,7 +247,7 @@ export function CustomerTable() {
                 <TableRow>
                   <TableCell>
                     <div className="font-medium">Liam Johnson</div>
-                    <div className="text-muted-foreground hidden text-sm md:inline">
+                    <div className="hidden text-sm text-muted-foreground md:inline">
                       liam@example.com
                     </div>
                   </TableCell>
@@ -172,7 +265,7 @@ export function CustomerTable() {
                 <TableRow>
                   <TableCell>
                     <div className="font-medium">Liam Johnson</div>
-                    <div className="text-muted-foreground hidden text-sm md:inline">
+                    <div className="hidden text-sm text-muted-foreground md:inline">
                       liam@example.com
                     </div>
                   </TableCell>
@@ -190,7 +283,7 @@ export function CustomerTable() {
                 <TableRow>
                   <TableCell>
                     <div className="font-medium">Olivia Smith</div>
-                    <div className="text-muted-foreground hidden text-sm md:inline">
+                    <div className="hidden text-sm text-muted-foreground md:inline">
                       olivia@example.com
                     </div>
                   </TableCell>
@@ -208,7 +301,7 @@ export function CustomerTable() {
                 <TableRow>
                   <TableCell>
                     <div className="font-medium">Emma Brown</div>
-                    <div className="text-muted-foreground hidden text-sm md:inline">
+                    <div className="hidden text-sm text-muted-foreground md:inline">
                       emma@example.com
                     </div>
                   </TableCell>
