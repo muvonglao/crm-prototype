@@ -108,26 +108,26 @@ export const teams = createTable("teams", {
 
 export const usersTeams = createTable("users_teams", {
   id: serial("id").primaryKey(),
-  teamId: text("teamId")
+  teamId: text("team_id")
     .notNull()
     .references(() => teams.id, { onDelete: "cascade" }),
-  userId: text("userId")
+  userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   role: text("role").notNull(),
 });
 
 export const leads = createTable("leads", {
-  leadId: serial("leadId").primaryKey(),
-  userId: text("userId").references(() => users.id, { onDelete: "cascade" }),
+  leadId: serial("lead_id").primaryKey(),
+  userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
   name: varchar("name", { length: 100 }),
   email: varchar("email", { length: 100 }),
   phone: varchar("phone", { length: 20 }),
   company: varchar("company", { length: 100 }),
-  stageId: serial("stageId")
+  stageId: serial("stage_id")
     .notNull()
     .references(() => leadStages.stageId, { onDelete: "cascade" }),
-  typeId: serial("typeId")
+  typeId: serial("type_id")
     .notNull()
     .references(() => leadTypes.typeId, { onDelete: "cascade" }),
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -139,21 +139,21 @@ export const leads = createTable("leads", {
 });
 
 export const leadTypes = createTable("lead_types", {
-  typeId: serial("typeId").primaryKey(),
+  typeId: serial("type_id").primaryKey(),
   typeName: varchar("type_name", { length: 50 }).notNull(),
 });
 
 export const leadStages = createTable("lead_stages", {
-  stageId: serial("stageId").primaryKey(),
+  stageId: serial("stage_id").primaryKey(),
   stageName: varchar("stage_name", { length: 50 }).notNull(),
 });
 
 export const leadStagesHistory = createTable("lead_stages_history", {
   id: serial("id").primaryKey(),
-  leadId: serial("leadId")
+  leadId: serial("lead_id")
     .notNull()
     .references(() => leads.leadId, { onDelete: "cascade" }),
-  stageId: serial("stageId")
+  stageId: serial("stage_id")
     .notNull()
     .references(() => leadStages.stageId, { onDelete: "cascade" }),
   changeDate: timestamp("change_date", { withTimezone: true })
@@ -163,10 +163,10 @@ export const leadStagesHistory = createTable("lead_stages_history", {
 
 export const stagesNotes = createTable("stages_notes", {
   id: serial("id").primaryKey(),
-  leadId: serial("leadId")
+  leadId: serial("lead_id")
     .notNull()
     .references(() => leads.leadId, { onDelete: "cascade" }),
-  stageId: serial("stageId")
+  stageId: serial("stage_id")
     .notNull()
     .references(() => leadStages.stageId, { onDelete: "cascade" }),
   note: text("note"),
@@ -174,10 +174,10 @@ export const stagesNotes = createTable("stages_notes", {
 
 export const amounts = createTable("amounts", {
   id: serial("id").primaryKey(),
-  leadId: serial("leadId")
+  leadId: serial("lead_id")
     .notNull()
     .references(() => leads.leadId, { onDelete: "cascade" }),
-  stageId: serial("stageId")
+  stageId: serial("stage_id")
     .notNull()
     .references(() => leadStages.stageId, { onDelete: "cascade" }),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull().default("0"),
@@ -185,26 +185,26 @@ export const amounts = createTable("amounts", {
 
 export const closingDates = createTable("closing_dates", {
   id: serial("id").primaryKey(),
-  leadId: serial("leadId")
+  leadId: serial("lead_id")
     .notNull()
     .references(() => leads.leadId, { onDelete: "cascade" }),
-  stageId: serial("stageId")
+  stageId: serial("stage_id")
     .notNull()
     .references(() => leadStages.stageId, { onDelete: "cascade" }),
   closingDate: timestamp("closing_date", { mode: "date" }).notNull(),
 });
 
 export const services = createTable("services", {
-  serviceId: serial("serviceId").primaryKey(),
+  serviceId: serial("service_id").primaryKey(),
   serviceName: varchar("service_name", { length: 100 }).notNull(),
 });
 
-export const leadServices = createTable("lead_services", {
+export const leadServices = createTable("leads_services", {
   id: serial("id").primaryKey(),
-  leadId: serial("leadId")
+  leadId: serial("lead_id")
     .notNull()
     .references(() => leads.leadId, { onDelete: "cascade" }),
-  serviceId: serial("serviceId")
+  serviceId: serial("service_id")
     .notNull()
     .references(() => services.serviceId, { onDelete: "cascade" }),
   createdAt: timestamp("created_at", { withTimezone: true })
