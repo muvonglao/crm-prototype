@@ -23,24 +23,24 @@ import type { AdapterAccountType } from "next-auth/adapters";
 export const createTable = pgTableCreator((name) => `crm_${name}`);
 
 export const users = createTable("user", {
-  id: text("id")
+  id: text("user_id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: text("name"),
   email: text("email").notNull(),
-  emailVerified: timestamp("emailVerified", { mode: "date" }),
+  emailVerified: timestamp("email_verified", { mode: "date" }),
   image: text("image"),
 });
 
 export const accounts = createTable(
   "account",
   {
-    userId: text("userId")
+    userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     type: text("type").$type<AdapterAccountType>().notNull(),
     provider: text("provider").notNull(),
-    providerAccountId: text("providerAccountId").notNull(),
+    providerAccountId: text("provider_account_id").notNull(),
     refresh_token: text("refresh_token"),
     access_token: text("access_token"),
     expires_at: integer("expires_at"),
@@ -57,15 +57,15 @@ export const accounts = createTable(
 );
 
 export const sessions = createTable("session", {
-  sessionToken: text("sessionToken").primaryKey(),
-  userId: text("userId")
+  sessionToken: text("session_token").primaryKey(),
+  userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   expires: timestamp("expires", { mode: "date" }).notNull(),
 });
 
 export const verificationTokens = createTable(
-  "verificationToken",
+  "verification_token",
   {
     identifier: text("identifier").notNull(),
     token: text("token").notNull(),
@@ -81,15 +81,15 @@ export const verificationTokens = createTable(
 export const authenticators = createTable(
   "authenticator",
   {
-    credentialID: text("credentialID").notNull().unique(),
-    userId: text("userId")
+    credentialID: text("credential_id").notNull().unique(),
+    userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    providerAccountId: text("providerAccountId").notNull(),
-    credentialPublicKey: text("credentialPublicKey").notNull(),
+    providerAccountId: text("provider_account_id").notNull(),
+    credentialPublicKey: text("credential_public_key").notNull(),
     counter: integer("counter").notNull(),
-    credentialDeviceType: text("credentialDeviceType").notNull(),
-    credentialBackedUp: boolean("credentialBackedUp").notNull(),
+    credentialDeviceType: text("credential_device_type").notNull(),
+    credentialBackedUp: boolean("credential_backed_up").notNull(),
     transports: text("transports"),
   },
   (authenticator) => ({
@@ -100,36 +100,39 @@ export const authenticators = createTable(
 );
 
 export const teams = createTable("teams", {
-  id: text("id")
+  teamId: text("team_id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   teamName: varchar("team_name", { length: 100 }),
 });
 
-export const usersTeams = createTable("users_teams", {
-  id: serial("id").primaryKey(),
+export const usersToTeams = createTable("users_to_teams", {
+  userTeamId: serial("user_to_team_id").primaryKey(),
   teamId: text("team_id")
     .notNull()
-    .references(() => teams.id, { onDelete: "cascade" }),
+    .references(() => teams.teamId, { onDelete: "cascade" }),
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   role: text("role").notNull(),
 });
 
-export const leads = createTable("leads", {
-  leadId: serial("lead_id").primaryKey(),
+export const contacts = createTable("contacts", {
+  contactId: text("contact_id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  teamId: text("team_id")
+    .notNull()
+    .references(() => teams.teamId, { onDelete: "cascade" }),
   userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
   name: varchar("name", { length: 100 }),
   email: varchar("email", { length: 100 }),
   phone: varchar("phone", { length: 20 }),
   company: varchar("company", { length: 100 }),
-  stageId: serial("stage_id")
-    .notNull()
-    .references(() => leadStages.stageId, { onDelete: "cascade" }),
   typeId: serial("type_id")
     .notNull()
-    .references(() => leadTypes.typeId, { onDelete: "cascade" }),
+    .references(() => contactTypes.typeId, { onDelete: "cascade" }),
+  contactNote: text("contact_note"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -138,76 +141,54 @@ export const leads = createTable("leads", {
   ),
 });
 
-export const leadTypes = createTable("lead_types", {
+export const contactTypes = createTable("contact_types", {
   typeId: serial("type_id").primaryKey(),
   typeName: varchar("type_name", { length: 50 }).notNull(),
 });
 
-export const leadStages = createTable("lead_stages", {
+export const deals = createTable("deals", {
+  dealId: text("deal_id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  contactId: text("contact_id")
+    .notNull()
+    .references(() => contacts.contactId, { onDelete: "cascade" }),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull().default("0"),
+  serviceId: serial("service_id")
+    .notNull()
+    .references(() => services.serviceId, { onDelete: "cascade" }),
+  stageId: serial("stage_id")
+    .notNull()
+    .references(() => dealStages.stageId, { onDelete: "cascade" }),
+  dealNote: text("deal_note"),
+  closingDate: timestamp("closing_date", { mode: "date" }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+    () => new Date(),
+  ),
+});
+
+export const dealStages = createTable("deal_stages", {
   stageId: serial("stage_id").primaryKey(),
   stageName: varchar("stage_name", { length: 50 }).notNull(),
 });
 
-export const leadStagesHistory = createTable("lead_stages_history", {
-  id: serial("id").primaryKey(),
-  leadId: serial("lead_id")
+export const dealStagesHistory = createTable("deal_stages_history", {
+  dealStageHistoryId: serial("deal_stage_history_id").primaryKey(),
+  dealId: text("deal_id")
     .notNull()
-    .references(() => leads.leadId, { onDelete: "cascade" }),
+    .references(() => deals.dealId, { onDelete: "cascade" }),
   stageId: serial("stage_id")
     .notNull()
-    .references(() => leadStages.stageId, { onDelete: "cascade" }),
+    .references(() => dealStages.stageId, { onDelete: "cascade" }),
   changeDate: timestamp("change_date", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });
 
-export const stagesNotes = createTable("stages_notes", {
-  id: serial("id").primaryKey(),
-  leadId: serial("lead_id")
-    .notNull()
-    .references(() => leads.leadId, { onDelete: "cascade" }),
-  stageId: serial("stage_id")
-    .notNull()
-    .references(() => leadStages.stageId, { onDelete: "cascade" }),
-  note: text("note"),
-});
-
-export const amounts = createTable("amounts", {
-  id: serial("id").primaryKey(),
-  leadId: serial("lead_id")
-    .notNull()
-    .references(() => leads.leadId, { onDelete: "cascade" }),
-  stageId: serial("stage_id")
-    .notNull()
-    .references(() => leadStages.stageId, { onDelete: "cascade" }),
-  amount: decimal("amount", { precision: 10, scale: 2 }).notNull().default("0"),
-});
-
-export const closingDates = createTable("closing_dates", {
-  id: serial("id").primaryKey(),
-  leadId: serial("lead_id")
-    .notNull()
-    .references(() => leads.leadId, { onDelete: "cascade" }),
-  stageId: serial("stage_id")
-    .notNull()
-    .references(() => leadStages.stageId, { onDelete: "cascade" }),
-  closingDate: timestamp("closing_date", { mode: "date" }).notNull(),
-});
-
 export const services = createTable("services", {
   serviceId: serial("service_id").primaryKey(),
   serviceName: varchar("service_name", { length: 100 }).notNull(),
-});
-
-export const leadServices = createTable("leads_services", {
-  id: serial("id").primaryKey(),
-  leadId: serial("lead_id")
-    .notNull()
-    .references(() => leads.leadId, { onDelete: "cascade" }),
-  serviceId: serial("service_id")
-    .notNull()
-    .references(() => services.serviceId, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
 });

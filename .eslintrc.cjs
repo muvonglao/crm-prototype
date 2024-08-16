@@ -49,6 +49,7 @@ const config = {
     ],
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/prefer-nullish-coalescing": "warn",
+    "react/no-unescaped-entities": "off",
   },
 };
 module.exports = config;

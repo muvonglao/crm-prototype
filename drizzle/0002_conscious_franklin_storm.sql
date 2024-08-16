@@ -1,1 +1,0 @@
-ALTER TABLE "crm_leads" ALTER COLUMN "userId" DROP NOT NULL;
