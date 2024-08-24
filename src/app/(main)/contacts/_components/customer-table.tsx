@@ -174,7 +174,7 @@ export function ContactsTable({ user }: ContactsTable) {
                               </TableCell>
                             </TableRow>
                           </SheetTrigger>
-                          <SheetContent>
+                          <SheetContent className="my-3 mr-3 rounded-lg">
                             <SheetHeader>
                               <SheetTitle>Edit profile</SheetTitle>
                               <SheetDescription>
