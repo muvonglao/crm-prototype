@@ -48,12 +48,20 @@ interface CustomerTable {
 }
 
 export function CustomerTable({ user }: CustomerTable) {
-  const team = api.user.getTeamNames.useQuery({
-    userId: user?.id ?? "",
-  });
+  const {
+    data: teamNames,
+    error,
+    isLoading,
+  } = api.user.getTeam.useQuery(
+    {
+      userId: user?.id,
+    },
+    { enabled: !!user?.id },
+  );
 
-  console.log(team.data);
-
+  console.log("1", teamNames);
+  console.log("2", error);
+  console.log("3", isLoading);
   return (
     <Tabs defaultValue="week">
       <div className="flex items-center">

@@ -2,48 +2,50 @@ import "server-only";
 
 import { z } from "zod";
 
-import { and, eq } from "drizzle-orm";
-import {
-  contacts,
-  teams,
-  deals,
-  users,
-  dealStages,
-  contactTypes,
-  services,
-} from "~/server/db/schema";
+import { eq } from "drizzle-orm";
+import { contacts, contactTypes } from "~/server/db/schema";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { TRPCError } from "@trpc/server";
 
-export const dealsRouter = createTRPCRouter({
-  getDeals: protectedProcedure.query(({ ctx }) => {
-    return null;
+export const contactsRouter = createTRPCRouter({
+  getContacts: protectedProcedure
+    .input(
+      z.object({
+        teamId: z.number().nullish(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { teamId } = input;
+      if (!teamId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Team Id is required",
+        });
+      }
 
-    // ctx.db
-    //   .select({
-    //     leadId: leads.leadId,
-    //     userId: leads.userId,
-    //     userName: users.name,
-    //     userImage: users.image,
-    //     stageId: leads.stageId,
-    //     stageName: leadStages.stageName,
-    //     typeId: leads.typeId,
-    //     typeName: leadTypes.typeName,
-    //     serviceId: services.serviceId,
-    //     serviceName: services.serviceName,
-    //     name: leads.name,
-    //     email: leads.email,
-    //     phone: leads.phone,
-    //     company: leads.company,
-    //     createdAt: leads.createdAt,
-    //     updatedAt: leads.updatedAt,
-    //   })
-    //   .from(leads)
-    //   .leftJoin(users, eq(leads.userId, users.id))
-    //   .leftJoin(leadStages, eq(leads.stageId, leadStages.stageId))
-    //   .leftJoin(leadTypes, eq(leads.typeId, leadTypes.typeId))
-    //   .leftJoin(leadServices, eq(leads.leadId, leadServices.leadId))
-    //   .leftJoin(services, eq(leadServices.serviceId, services.serviceId))
-    //   .execute();
-  }),
+      const contactList = await ctx.db
+        .select({
+          id: contacts.contactId,
+          name: contacts.name,
+          email: contacts.email,
+          company: contacts.company,
+          phone: contacts.phone,
+          note: contacts.contactNote,
+          type: contactTypes.typeName,
+          slug: contacts.slug,
+        })
+        .from(contacts)
+        .innerJoin(contactTypes, eq(contacts.typeId, contactTypes.typeId))
+        .where(eq(contacts.teamId, teamId));
+
+      if (contactList.length === 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "No contacts found for this user",
+        });
+      }
+
+      return contactList;
+    }),
 });

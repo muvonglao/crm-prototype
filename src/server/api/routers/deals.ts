@@ -14,36 +14,41 @@ import {
 } from "~/server/db/schema";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { TRPCError } from "@trpc/server";
 
 export const dealsRouter = createTRPCRouter({
-  getDeals: protectedProcedure.query(({ ctx }) => {
-    return null;
+  getDeals: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string().uuid().optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { userId } = input;
 
-    // ctx.db
-    //   .select({
-    //     leadId: leads.leadId,
-    //     userId: leads.userId,
-    //     userName: users.name,
-    //     userImage: users.image,
-    //     stageId: leads.stageId,
-    //     stageName: leadStages.stageName,
-    //     typeId: leads.typeId,
-    //     typeName: leadTypes.typeName,
-    //     serviceId: services.serviceId,
-    //     serviceName: services.serviceName,
-    //     name: leads.name,
-    //     email: leads.email,
-    //     phone: leads.phone,
-    //     company: leads.company,
-    //     createdAt: leads.createdAt,
-    //     updatedAt: leads.updatedAt,
-    //   })
-    //   .from(leads)
-    //   .leftJoin(users, eq(leads.userId, users.id))
-    //   .leftJoin(leadStages, eq(leads.stageId, leadStages.stageId))
-    //   .leftJoin(leadTypes, eq(leads.typeId, leadTypes.typeId))
-    //   .leftJoin(leadServices, eq(leads.leadId, leadServices.leadId))
-    //   .leftJoin(services, eq(leadServices.serviceId, services.serviceId))
-    //   .execute();
-  }),
+      if (!userId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User ID is required",
+        });
+      }
+
+      const deals = await ctx.db
+        .select({
+          teamId: teams.teamId,
+          teamName: teams.teamName,
+        })
+        .from(usersToTeams)
+        .innerJoin(teams, eq(usersToTeams.teamId, teams.teamId))
+        .where(eq(usersToTeams.userId, userId));
+
+      if (teamNames.length === 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "No team names found for this user",
+        });
+      }
+
+      return teamNames;
+    }),
 });
